@@ -52,9 +52,10 @@ class HelpRequest(db.Model):
     requester_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(20), default='active')  # active, completed, cancelled
+    requester = db.relationship('User', backref='help_requests', lazy=True)
     contributions = db.relationship('Contribution', backref='request', lazy=True)
     repayments = db.relationship('Repayment', backref='request', lazy=True)
-
+    
 class Contribution(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
@@ -62,6 +63,7 @@ class Contribution(db.Model):
     request_id = db.Column(db.Integer, db.ForeignKey('help_request.id'), nullable=False)
     is_anonymous = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    contributor = db.relationship('User', backref='contributions', lazy=True)
 
 class Repayment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,7 +79,7 @@ class ThankYouMessage(db.Model):
     to_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     request_id = db.Column(db.Integer, db.ForeignKey('help_request.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
