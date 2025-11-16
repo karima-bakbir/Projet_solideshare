@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Contribuer - SolidShare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card animate-fade-in">
+            <div class="card-header bg-warning text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-hand-holding-heart me-2"></i>
+                    Contribuer à une demande
+                </h4>
+                <p class="mb-0 mt-1 opacity-75">{{ request.title }}</p>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>À propos de cette demande :</strong><br>
+                    {{ request.description }}
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="h5 text-primary mb-1">{{ "%.2f"|format(request.amount_collected) }} MAD</div>
+                            <small class="text-muted">Déjà collecté</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="h5 text-success mb-1">{{ "%.2f"|format(request.amount_needed - request.amount_collected) }} MAD</div>
+                            <small class="text-muted">Encore besoin</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress mb-4" style="height: 12px;">
+                    <div class="progress-bar bg-success" role="progressbar"
+                         style="width: {{ ((request.amount_collected / request.amount_needed) * 100)|round }}%"
+                         aria-valuenow="{{ request.amount_collected }}"
+                         aria-valuemin="0"
+                         aria-valuemax="{{ request.amount_needed }}"></div>
+                </div>
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-4">
+                        {{ form.amount.label(class="form-label fw-bold") }}
+                        <div class="input-group input-group-lg">
+                            {{ form.amount(class="form-control" + (" is-invalid" if form.amount.errors else ""), placeholder="0.00") }}
+                            <span class="input-group-text">MAD</span>
+                        </div>
+                        {% if form.amount.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.amount.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Contribuez selon vos moyens. Chaque geste compte !</small>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.is_anonymous.label(class="form-label fw-bold") }}
+                        <div class="form-check">
+                            {{ form.is_anonymous(class="form-check-input") }}
+                            {{ form.is_anonymous.label(class="form-check-label") }}
+                        </div>
+                        <small class="form-text text-muted">Votre contribution sera visible publiquement, sauf si vous choisissez l'anonymat.</small>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <i class="fas fa-heart me-2"></i>
+                        <strong>Merci pour votre générosité !</strong> Votre contribution aidera quelqu'un dans le besoin.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('request_detail', request_id=request.id) }}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-1"></i>Annuler
+                        </a>
+                        {{ form.submit(class="btn btn-warning btn-lg text-white") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4 border-success">
+            <div class="card-body">
+                <h6 class="card-title text-success">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Sécurité et confidentialité
+                </h6>
+                <ul class="mb-0 text-muted">
+                    <li>Les transactions sont sécurisées</li>
+                    <li>Vos informations personnelles sont protégées</li>
+                    <li>Vous pouvez contribuer de manière anonyme</li>
+                    <li>Le remboursement se fait progressivement</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

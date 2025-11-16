@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Envoyer un merci - SolidShare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card animate-fade-in">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-heart me-2"></i>
+                    Envoyer un message de remerciement
+                </h4>
+                <p class="mb-0 mt-1 opacity-75">Pour : {{ request.title }}</p>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Exprimez votre gratitude :</strong><br>
+                    Un petit mot de remerciement renforce les liens de solidarité dans votre communauté.
+                </div>
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-4">
+                        {{ form.message.label(class="form-label fw-bold") }}
+                        {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""), rows=6, placeholder="Écrivez votre message de remerciement ici... Soyez sincère et personnel !") }}
+                        {% if form.message.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.message.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Partagez comment cette aide vous a aidé et exprimez votre reconnaissance.</small>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <i class="fas fa-heart me-2"></i>
+                        <strong>Conseil :</strong> Mentionnez des détails personnels pour rendre votre message plus touchant.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('request_detail', request_id=request.id) }}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-1"></i>Annuler
+                        </a>
+                        {{ form.submit(class="btn btn-danger btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4 border-info">
+            <div class="card-body">
+                <h6 class="card-title text-info">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Idées de messages
+                </h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="text-muted small">
+                            <li>"Merci infiniment pour votre générosité !"</li>
+                            <li>"Votre aide m'a beaucoup soulagé."</li>
+                            <li>"Je suis reconnaissant(e) pour votre soutien."</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="text-muted small">
+                            <li>"Cela signifie beaucoup pour moi."</li>
+                            <li>"Merci pour votre confiance en moi."</li>
+                            <li>"Je rembourserai dès que possible."</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

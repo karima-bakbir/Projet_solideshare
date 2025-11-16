@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Demander de l'aide - SolidShare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card animate-fade-in">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-hand-holding-heart me-2"></i>
+                    Demander de l'aide
+                </h4>
+                <p class="mb-0 mt-1 opacity-75">Groupe : {{ group.name }}</p>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-4">
+                        {{ form.title.label(class="form-label fw-bold") }}
+                        {{ form.title(class="form-control form-control-lg" + (" is-invalid" if form.title.errors else ""), placeholder="Ex: Aide pour les frais médicaux") }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Choisissez un titre clair et concis pour votre demande.</small>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.description.label(class="form-label fw-bold") }}
+                        {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=5, placeholder="Décrivez votre situation et expliquez pourquoi vous avez besoin d'aide...") }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.description.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Soyez transparent et honnête dans votre description pour gagner la confiance des contributeurs.</small>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.amount_needed.label(class="form-label fw-bold") }}
+                        <div class="input-group input-group-lg">
+                            {{ form.amount_needed(class="form-control" + (" is-invalid" if form.amount_needed.errors else ""), placeholder="0.00") }}
+                            <span class="input-group-text">MAD</span>
+                        </div>
+                        {% if form.amount_needed.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.amount_needed.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Indiquez le montant exact dont vous avez besoin. Soyez réaliste et précis.</small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Important :</strong> Toutes les contributions sont faites de manière solidaire. Vous rembourserez progressivement selon vos moyens.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('group_detail', group_id=group.id) }}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-1"></i>Annuler
+                        </a>
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4 border-warning">
+            <div class="card-body">
+                <h6 class="card-title text-warning">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Conseils pour une demande réussie
+                </h6>
+                <ul class="mb-0 text-muted">
+                    <li>Soyez transparent sur l'utilisation des fonds</li>
+                    <li>Expliquez clairement votre situation</li>
+                    <li>Montrez votre volonté de rembourser</li>
+                    <li>Restez en contact avec vos contributeurs</li>
+                    <li>Envoyez des remerciements personnalisés</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

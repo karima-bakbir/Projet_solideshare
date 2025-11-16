@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SolidShare{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-tachometer-alt text-primary me-2"></i>
+            Bienvenue, {{ current_user.username }} !
+        </h1>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-users fa-2x text-primary"></i>
+                </div>
+                <div>
+                    <div class="stats-number">{{ groups|length }}</div>
+                    <div class="stats-label">Groupes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-hand-holding-heart fa-2x text-success"></i>
+                </div>
+                <div>
+                    <div class="stats-number">{{ requests|length }}</div>
+                    <div class="stats-label">Demandes d'aide</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-coins fa-2x text-warning"></i>
+                </div>
+                <div>
+                    <div class="stats-number">{{ contributions|length }}</div>
+                    <div class="stats-label">Contributions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-users text-primary me-2"></i>
+                    Mes groupes
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if groups %}
+                    <div class="list-group list-group-flush">
+                        {% for group in groups %}
+                        <a href="{{ url_for('group_detail', group_id=group.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ group.name }}</h6>
+                                <p class="mb-1 text-muted">{{ group.description or "Aucune description" }}</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-muted"></i>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Vous n'avez rejoint aucun groupe pour le moment.</p>
+                        <a href="{{ url_for('create_group') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Créer un groupe
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-hand-holding-heart text-success me-2"></i>
+                    Mes demandes d'aide
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if requests %}
+                    <div class="list-group list-group-flush">
+                        {% for request in requests %}
+                        <a href="{{ url_for('request_detail', request_id=request.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ request.title }}</h6>
+                                    <p class="mb-1 text-muted">{{ request.description[:100] }}...</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-coins me-1"></i>
+                                        {{ "%.2f"|format(request.amount_collected) }} / {{ "%.2f"|format(request.amount_needed) }} MAD
+                                    </small>
+                                </div>
+                                <span class="badge bg-{{ 'success' if request.status == 'completed' else 'warning' }}">
+                                    {{ 'Terminée' if request.status == 'completed' else 'Active' }}
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-hand-holding-heart fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Vous n'avez aucune demande d'aide en cours.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-coins text-warning me-2"></i>
+                    Mes contributions récentes
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if contributions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Demandes</th>
+                                    <th>Montant</th>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contribution in contributions[-5:] %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('request_detail', request_id=contribution.request_id) }}" class="text-decoration-none">
+                                            {{ contribution.request.title }}
+                                        </a>
+                                    </td>
+                                    <td class="fw-bold text-success">{{ "%.2f"|format(contribution.amount) }} MAD</td>
+                                    <td>{{ contribution.created_at.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if contribution.request.status == 'completed' else 'warning' }}">
+                                            {{ 'Terminée' if contribution.request.status == 'completed' else 'Active' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-coins fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Vous n'avez encore fait aucune contribution.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
